@@ -8,6 +8,7 @@ local tbug = TBUG or SYSTEMS:GetSystem("merTorchbug")
 local type = type
 local strfind = string.find
 local tinsert = table.insert
+local tremove = table.remove
 
 local types = tbug.types
 local stringType = types.string
@@ -352,7 +353,7 @@ end
 function tbug.DeleteEventsTracked(key)
     local savedEvents = tbug.savedVars.savedEvents
     if key == nil or savedEvents == nil or savedEvents[key] == nil then return end
-    tbug.savedVars.savedEvents[key] = nil
+    tremove(tbug.savedVars.savedEvents, key)
     d("[TBUG]Deleted saved events #" .. tostring(key))
 end
 

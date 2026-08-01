@@ -991,9 +991,10 @@ local function showEventsContextMenu(p_self, p_row, p_data, isEventMainUIToggle)
         if not ZO_IsTableEmpty(savedEvents) then
             local eventTrackingSettingsLoadSavedSubmenu = {}
             for k, v in ipairs(savedEvents) do
-                local timeStampStr = (v._timeStamp ~= nil and os.date("%c", v._timeStamp)) or ""
-                local loadDetailsStr = tostring(k) .. ". " .. timeStampStr .. " (#" .. tos(NonContiguousCount(v.events)) ..")"
                 local savedEventsIndex = k
+                local savedEventsData = v
+                local timeStampStr = (savedEventsData._timeStamp ~= nil and os.date("%c", savedEventsData._timeStamp)) or ""
+                local loadDetailsStr = tostring(savedEventsIndex) .. ". " .. timeStampStr .. " (#" .. tos(NonContiguousCount(savedEventsData.events)) ..")"
                 local eventTrackingSettingsLoadSubmenuEntry = {
                     label = "Load " .. loadDetailsStr,
                     callback = function()
