@@ -980,8 +980,10 @@ local function showEventsContextMenu(p_self, p_row, p_data, isEventMainUIToggle)
 
 
     if isEventSettingsMenu then
-        AddCustomScrollableMenuDivider()
+        local dividerEventsSaveLoadAdded = false
         if enableBecauseEventsListIsNotEmpty() then
+            AddCustomScrollableMenuDivider()
+            dividerEventsSaveLoadAdded = true
             AddCustomScrollableMenuEntry("Save currently tracked events", function() tbug.SaveEventsTracked() end, LSM_ENTRY_TYPE_NORMAL, nil, {
                 tooltip = "Save the currently tracked events so that you can load them later again.\n\nThis will only work, if you currently got tracked events in the list!"
             })
@@ -1010,6 +1012,10 @@ local function showEventsContextMenu(p_self, p_row, p_data, isEventMainUIToggle)
                     end,
                 }
                 table_insert(eventTrackingSettingsLoadSavedSubmenu, eventTrackingSettingsLoadSubmenuEntry)
+            end
+            if not dividerEventsSaveLoadAdded then
+                AddCustomScrollableMenuDivider()
+                dividerEventsSaveLoadAdded = true
             end
             AddCustomScrollableSubMenuEntry("Load tracked events", eventTrackingSettingsLoadSavedSubmenu)
         end

@@ -1809,10 +1809,13 @@ end
 
 --Logout and Quit hook function
 local function tbugLogoutQuitHook(type)
+--d("[TBUG]Logout/Quit PreHook - trackEventsAutoOnNextLogin: " ..tos(tbug.activateAutomaticEventTrackingOnNextLogin))
     if tbug.activateAutomaticEventTrackingOnNextLogin == true then
         tbug_SetAutomaticEventsTrackingFlag = tbug_SetAutomaticEventsTrackingFlag or tbug.SetAutomaticEventsTrackingFlag
-        tbug_SetAutomaticEventsTrackingFlag(true, false)
+        --value, doReloadUI, activateNextLogin, chatOutput, onlyFor1ReloadUI, allOff
+        tbug_SetAutomaticEventsTrackingFlag(true, false, nil, nil, true)
     end
+    --return true --todo remove after debugging: Prevent logout/quit to check debug messages
 end
 
 function tbug.UpdateAddOns()
@@ -2574,8 +2577,8 @@ local function onAddOnLoaded(event, addOnName)
     updateTbugGlobalMouseUpHandler(isMouseRightAndLeftAndSHIFTClickEnabled(true))
 
     --For the automatic event tracking on next login
-    ZO_PreHook("Logout",    function() tbugLogoutQuitHook("Logout") end)
-    ZO_PreHook("Quit",      function() tbugLogoutQuitHook("Quit") end)
+    ZO_PreHook("Logout",    function() return tbugLogoutQuitHook("Logout") end)
+    ZO_PreHook("Quit",      function() return tbugLogoutQuitHook("Quit") end)
 end
 EM:RegisterForEvent(myNAME .."_AddOnLoaded", EVENT_ADD_ON_LOADED, onAddOnLoaded)
 

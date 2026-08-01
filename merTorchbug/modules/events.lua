@@ -384,12 +384,16 @@ function tbug.SetAutomaticEventsTrackingFlag(value, doReloadUI, activateNextLogi
 
     tbug.savedVars.enableEventTrackerAtStartup = value
     tbug.savedVars.enableEventTrackerAtStartupOnlyOnce = nil
-    if value ~= nil and value == true and not doReloadUI and not activateNextLogin and chatOutput == true then
+    if value ~= nil and value == true and not doReloadUI and not activateNextLogin then
         if true == onlyFor1ReloadUI then
             tbug.savedVars.enableEventTrackerAtStartupOnlyOnce = true
-            d("[TBUG]Automatic events at 1 next ReloadUI: On")
+            if chatOutput == true then
+                d("[TBUG]Automatic events at 1 next ReloadUI: On")
+            end
         else
-            d("[TBUG]Automatic events at all ReloadUIs: On")
+            if chatOutput == true then
+                d("[TBUG]Automatic events at all ReloadUIs: On")
+            end
         end
     end
 
