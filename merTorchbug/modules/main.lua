@@ -1370,9 +1370,12 @@ function tbug.slashCommandEvents(args)
     clearDataForInspector()
 
     local argsOptions = (args ~= nil and parseSlashCommandArgumentsAndReturnTable(args, true)) or nil
-d(">argsOptions[1]: " .. tos(argsOptions ~= nil and argsOptions[1] or nil))
-    if argsOptions ~= nil and argsOptions[1] ~= nil and allowedSlashCommandsEventsParameters[argsOptions[1]] then
+    local option1 = (argsOptions ~= nil and argsOptions[1]) or nil
+--d(">argsOptions[1]: " .. tos(option1))
+    if option1 ~= nil and allowedSlashCommandsEventsParameters[option1] then
         --[[
+                /tbe start      Start the event tracking
+                /tbe stop       Stop the event tracking
                 /tbe autooff    Disable automatic event tracking
                 /tbe 1reload    Enable event tracking after 1 next reloadui
                 /tbe reload     Enable event tracking after each reloadui
@@ -1381,15 +1384,19 @@ d(">argsOptions[1]: " .. tos(argsOptions ~= nil and argsOptions[1] or nil))
         ]]
         --value, doReloadUI, activateNextLogin, chatOutput, onlyFor1ReloadUI, allOff
         tbug_SetAutomaticEventsTrackingFlag = tbug_SetAutomaticEventsTrackingFlag or tbug.SetAutomaticEventsTrackingFlag
-        if args == "reload" then
+        if option1 == "reload" then
             tbug_SetAutomaticEventsTrackingFlag(true, false, nil, true)
-        elseif args == "1reload" then
+        elseif option1 == "1reload" then
             tbug_SetAutomaticEventsTrackingFlag(true, false, nil, true, true)
-        elseif args == "reloadnow" then
+        elseif option1 == "reloadnow" then
             tbug_SetAutomaticEventsTrackingFlag(true, true, nil, true)
-        elseif args == "login" then
+        elseif option1 == "login" then
             tbug_SetAutomaticEventsTrackingFlag(nil, false, true, true)
-        elseif args == "autooff" then
+        elseif option1 == "start" then
+            tbug.StartEventTracking()
+        elseif option1 == "stop" then
+            tbug.StopEventTracking()
+        elseif option1 == "autooff" then
             tbug_SetAutomaticEventsTrackingFlag(nil, nil, nil, true, nil, true)
         end
 

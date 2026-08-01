@@ -300,6 +300,8 @@ tbug.openNewWindowSlashCommands = {
 }
 --Special parameter for the events slash commands
 --[[
+        /tbe start      Start the event tracking
+        /tbe stop       Stop the event tracking
         /tbe autooff    Disable automatic event tracking
         /tbe 1reload    Enable event tracking after 1 next reloadui
         /tbe reload     Enable event tracking after each reloadui
@@ -307,6 +309,8 @@ tbug.openNewWindowSlashCommands = {
         /tbe login      Enable event tracking once at next login
 ]]
 tbug.allowedSlashCommandsEventsParameters = {
+    ["start"] = true,
+    ["stop"] = true,
     ["autooff"]  = true,
     ["1reload"]  = true,
     ["reload"]  = true,
