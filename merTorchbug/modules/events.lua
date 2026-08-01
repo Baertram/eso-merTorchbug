@@ -372,8 +372,13 @@ function tbug.SetAutomaticEventsTrackingFlag(value, doReloadUI, activateNextLogi
     onlyFor1ReloadUI = onlyFor1ReloadUI or false
     allOff = allOff or false
 
+    if value ~= nil and activateNextLogin == true then
+        value = nil
+    end
+
     if allOff == true then
         tbug.activateAutomaticEventTrackingOnNextLogin = false
+        tbug.savedVars.enableEventTrackerAtNextLogin = nil
         tbug.savedVars.enableEventTrackerAtStartup = false
         tbug.savedVars.enableEventTrackerAtStartupOnlyOnce = nil
         if chatOutput == true then
@@ -384,6 +389,7 @@ function tbug.SetAutomaticEventsTrackingFlag(value, doReloadUI, activateNextLogi
 
     tbug.savedVars.enableEventTrackerAtStartup = value
     tbug.savedVars.enableEventTrackerAtStartupOnlyOnce = nil
+    tbug.savedVars.enableEventTrackerAtNextLogin = nil
     if value ~= nil and value == true and not doReloadUI and not activateNextLogin then
         if true == onlyFor1ReloadUI then
             tbug.savedVars.enableEventTrackerAtStartupOnlyOnce = true
@@ -415,12 +421,21 @@ end
 
 --At startup of the addon EVENT_ADD_ON_LOADED: Automatically load the event tracking?
 function tbug.AutomaticEventTrackingCheck()
+    local doStartEventTrackingNow = false
     local sv = tbug.savedVars
-    if sv.enableEventTrackerAtStartup then
+    if sv.enableEventTrackerAtNextLogin == true then
+        sv.enableEventTrackerAtNextLogin = nil
+        sv.enableEventTrackerAtStartupOnlyOnce = nil
+        sv.enableEventTrackerAtStartup = false
+        doStartEventTrackingNow = true
+    elseif sv.enableEventTrackerAtStartup == true then
         if sv.enableEventTrackerAtStartupOnlyOnce == true then
             sv.enableEventTrackerAtStartupOnlyOnce = nil
             sv.enableEventTrackerAtStartup = false
         end
+        doStartEventTrackingNow = true
+    end
+    if doStartEventTrackingNow == true then
         startEventTracking()
     end
 end

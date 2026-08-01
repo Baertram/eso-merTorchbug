@@ -837,6 +837,8 @@ local function showEventsContextMenu(p_self, p_row, p_data, isEventMainUIToggle)
     end
     if not useLibScrollableMenu then return end
 
+    local sv = tbug.savedVars
+
     local events    = tbug.Events
     eventsInspector = eventsInspector or events.getEventsTrackerInspectorControl()
 
@@ -1024,7 +1026,7 @@ local function showEventsContextMenu(p_self, p_row, p_data, isEventMainUIToggle)
         local eventTrackingAtStartupSettingsSubmenu = {}
         eventTrackingAtStartupSettingsSubmenu[#eventTrackingAtStartupSettingsSubmenu + 1] = {
             name            = "|cFF0000Disable|r the automatic Event tracking",
-            checked         = function() return not tbug.savedVars.enableEventTrackerAtStartup and not tbug.activateAutomaticEventTrackingOnNextLogin end,
+            checked         = function() return not sv.enableEventTrackerAtStartup and not tbug.activateAutomaticEventTrackingOnNextLogin and not sv.enableEventTrackerAtNextLogin end,
             callback        = function(comboBox, itemName, item, checked, data)
                 tbug_SetAutomaticEventsTrackingFlag = tbug_SetAutomaticEventsTrackingFlag or tbug.SetAutomaticEventsTrackingFlag
                 --value, doReloadUI, activateNextLogin, chatOutput, onlyFor1ReloadUI, allOff
@@ -1038,7 +1040,7 @@ local function showEventsContextMenu(p_self, p_row, p_data, isEventMainUIToggle)
         }
         eventTrackingAtStartupSettingsSubmenu[#eventTrackingAtStartupSettingsSubmenu + 1] = {
             name            = "Automatically enable 1x (after ReloadUI)",
-            checked         = function() return tbug.savedVars.enableEventTrackerAtStartupOnlyOnce == true and tbug.savedVars.enableEventTrackerAtStartup == true and not tbug.activateAutomaticEventTrackingOnNextLogin end,
+            checked         = function() return sv.enableEventTrackerAtStartupOnlyOnce == true and sv.enableEventTrackerAtStartup == true and not tbug.activateAutomaticEventTrackingOnNextLogin and not sv.enableEventTrackerAtNextLogin end,
             callback        = function(comboBox, itemName, item, checked, data)
                 tbug_SetAutomaticEventsTrackingFlag = tbug_SetAutomaticEventsTrackingFlag or tbug.SetAutomaticEventsTrackingFlag
                 tbug_SetAutomaticEventsTrackingFlag(checked, false, nil, true, true)
@@ -1051,7 +1053,7 @@ local function showEventsContextMenu(p_self, p_row, p_data, isEventMainUIToggle)
         }
         eventTrackingAtStartupSettingsSubmenu[#eventTrackingAtStartupSettingsSubmenu + 1] = {
             name            = "Automatically enable (all ReloadUIs)",
-            checked         = function() return not tbug.savedVars.enableEventTrackerAtStartupOnlyOnce and tbug.savedVars.enableEventTrackerAtStartup == true and not tbug.activateAutomaticEventTrackingOnNextLogin end,
+            checked         = function() return not sv.enableEventTrackerAtStartupOnlyOnce and sv.enableEventTrackerAtStartup == true and not tbug.activateAutomaticEventTrackingOnNextLogin and not sv.enableEventTrackerAtNextLogin end,
             callback        = function(comboBox, itemName, item, checked, data)
                 tbug_SetAutomaticEventsTrackingFlag = tbug_SetAutomaticEventsTrackingFlag or tbug.SetAutomaticEventsTrackingFlag
                 tbug_SetAutomaticEventsTrackingFlag(checked, false, nil, true)
@@ -1064,13 +1066,13 @@ local function showEventsContextMenu(p_self, p_row, p_data, isEventMainUIToggle)
         }
         eventTrackingAtStartupSettingsSubmenu[#eventTrackingAtStartupSettingsSubmenu + 1] = {
             name            = "Automatically enable (after next Login)",
-            checked         = function() return tbug.activateAutomaticEventTrackingOnNextLogin == true and not tbug.savedVars.enableEventTrackerAtStartup and not tbug.savedVars.enableEventTrackerAtStartupOnlyOnce end,
+            checked         = function() return (tbug.activateAutomaticEventTrackingOnNextLogin == true or sv.enableEventTrackerAtNextLogin == true) and not sv.enableEventTrackerAtStartup end,
             callback        = function( comboBox, itemName, item, checked, data)
                 tbug_SetAutomaticEventsTrackingFlag = tbug_SetAutomaticEventsTrackingFlag or tbug.SetAutomaticEventsTrackingFlag
                 tbug_SetAutomaticEventsTrackingFlag(nil, false, true, true)
             end,
             --entries         = submenuEntries,
-            tooltip         = "Automatically enable the event tracker after your 1 next login (character change, or client restart), as the AddOn merTorchbug loads.\nThis will open the global inspector and activate the events tab automatically.",
+            tooltip         = "Automatically enable the event tracker after your 1 next login (character change, or client restart), as the AddOn merTorchbug loads.\nThis will open the global inspector and activate the events tab automatically.\n\n|cFF0000Attention|r: This will reset if you reload the UI or get into a loading screen before logout/quit!",
             entryType = lsm.LSM_ENTRY_TYPE_RADIOBUTTON,
             buttonGroup = 1,
             --rightClickCallback = function() d("Test context menu")  end

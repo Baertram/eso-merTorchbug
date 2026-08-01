@@ -1811,9 +1811,11 @@ end
 local function tbugLogoutQuitHook(type)
 --d("[TBUG]Logout/Quit PreHook - trackEventsAutoOnNextLogin: " ..tos(tbug.activateAutomaticEventTrackingOnNextLogin))
     if tbug.activateAutomaticEventTrackingOnNextLogin == true then
-        tbug_SetAutomaticEventsTrackingFlag = tbug_SetAutomaticEventsTrackingFlag or tbug.SetAutomaticEventsTrackingFlag
-        --value, doReloadUI, activateNextLogin, chatOutput, onlyFor1ReloadUI, allOff
-        tbug_SetAutomaticEventsTrackingFlag(true, false, nil, nil, true)
+        tbug.savedVars.enableEventTrackerAtNextLogin = true
+        tbug.savedVars.enableEventTrackerAtStartupOnlyOnce = true
+        tbug.savedVars.enableEventTrackerAtStartup = false
+    else
+        tbug.savedVars.enableEventTrackerAtNextLogin = nil
     end
     --return true --todo remove after debugging: Prevent logout/quit to check debug messages
 end
