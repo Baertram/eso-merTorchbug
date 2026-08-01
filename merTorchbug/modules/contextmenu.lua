@@ -993,10 +993,19 @@ local function showEventsContextMenu(p_self, p_row, p_data, isEventMainUIToggle)
             for k, v in ipairs(savedEvents) do
                 local timeStampStr = (v._timeStamp ~= nil and os.date("%c", v._timeStamp)) or ""
                 local loadDetailsStr = tostring(k) .. ". " .. timeStampStr .. " (#" .. tos(NonContiguousCount(v.events)) ..")"
+                local savedEventsIndex = k
                 local eventTrackingSettingsLoadSubmenuEntry = {
                     label = "Load " .. loadDetailsStr,
                     callback = function()
-                        tbug.LoadEventsTracked(k, loadDetailsStr)
+                        tbug.LoadEventsTracked(savedEventsIndex, loadDetailsStr)
+                    end,
+                    contextMenuCallback = function(self)
+                        ClearMenu()
+                        AddMenuItem("Delete saved event \'" .. loadDetailsStr  .. "\'", function()
+                            tbug.DeleteEventsTracked(savedEventsIndex)
+                        end)
+                        lsm.preventLSMClosingZO_Menu = true
+                        ShowMenu()
                     end,
                 }
                 table_insert(eventTrackingSettingsLoadSavedSubmenu, eventTrackingSettingsLoadSubmenuEntry)

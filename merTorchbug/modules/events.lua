@@ -349,6 +349,13 @@ function tbug.SaveEventsTracked()
     end
 end
 
+function tbug.DeleteEventsTracked(key)
+    local savedEvents = tbug.savedVars.savedEvents
+    if key == nil or savedEvents == nil or savedEvents[key] == nil then return end
+    tbug.savedVars.savedEvents[key] = nil
+    d("[TBUG]Deleted saved events #" .. tostring(key))
+end
+
 function tbug.LoadEventsTracked(key, loadDetailsStr)
     local savedEvents = tbug.savedVars.savedEvents
     if key == nil or savedEvents == nil or savedEvents[key] == nil or savedEvents[key].events == nil then return end
