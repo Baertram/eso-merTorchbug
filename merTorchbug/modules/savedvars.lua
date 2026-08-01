@@ -63,6 +63,7 @@ local defaults =
 	},
 
     enableEventTrackerAtStartup = false,
+    --enableEventTrackerAtStartupOnlyOnce = nil, only added here for reference so you see it exists and is used!
     savedEvents = {},
 }
 tbug.svDefaults = defaults

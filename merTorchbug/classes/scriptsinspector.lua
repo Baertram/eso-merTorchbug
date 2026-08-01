@@ -52,8 +52,12 @@ local function runLua(command, isScriptsViewer)
     d("|CFF0000[ERROR|rlua script code is invalid!")
     assert(zo_ls(command))
     ]]
-    --Instead of only using LoadString, sue TBUG inspector to check code for functin, or control/table to inspect etc.
-    tbug.isScriptViewerRunningScript = isScriptsViewer
+
+    --Instead of only using LoadString, use TBUG inspector to check code for function, or control/table to inspect etc.
+    --260216 DakJaniels: Fix /tb APIFunc(param1, param2) where it should be /tb APIFunc(param1, param2, param3) showing the error about missing/wrong params again:
+    --tbug.isScriptViewerRunningScript = isScriptsViewer
+    --->Always true when running from chat edit box (ScriptsInspector or ScriptsViewer): don't parse source as inspect+search
+    tbug.isScriptViewerRunningScript = true --#20260412
     tbug_slashCommand(command)
     tbug.isScriptViewerRunningScript = nil
 end

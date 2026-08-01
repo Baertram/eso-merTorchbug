@@ -2,7 +2,7 @@ TBUG = {}
 local tbug = TBUG or SYSTEMS:GetSystem("merTorchbug")
 
 --Version and name of the AddOn
-tbug.version =  "1.75"
+tbug.version =  "1.76"
 tbug.name =     "merTorchbug"
 tbug.author =   "merlight, Baertram"
 
@@ -42,35 +42,29 @@ tbug.author =   "merlight, Baertram"
 --New opened inspector get their icons top right changed in size if font size at global inspector context menu is changed, but it does not always change back (at all opened inspector windows!) to new font size if changed later
 --20250107 Warning: tbugGlobalInspectorTabsContainerTab2 has a set height but has resizeToFitDescendents enabled. If this is intended, use resizeToFitConstrains="X".|r
 --20250330 Entering in chat editbox: GetItemRewardItemLink('|H1:item:119704:5:1:0:0:0:199:13:23:2:0:0:0:0:0:0:0:0:0:0:50000|h|h') raises an error Checking type on argument rewardId failed in GetItemRewardItemLink_lua
+--20260216 DakJaniels: Fix /tb APIFunc(param1, param2) where it should be /tb APIFunc(param1, param2, param3) showing the error about missing/wrong params again:
+--EVENT_DISPLAY_ACTIVE_COMBAT_TIP 131531 shows as EVENT_TUTORIAL_TRIGGER_COMPLETED 131535 in the (saved) events data? _eventName is wrong, _eventId is correct. Name and id do not match?
+--->local lookupEventName = tbug.Events.eventList
+
 
 -- [Planned features]
 
 
 -- [Working on]
---EVENT_DISPLAY_ACTIVE_COMBAT_TIP 131531 shows as EVENT_TUTORIAL_TRIGGER_COMPLETED 131535 in the (saved) events data? _eventName is wrong, _eventId is correct. Name and id do not match?
---->local lookupEventName = tbug.Events.eventList
+--260216 DakJaniels: Fix /tb APIFunc(param1, param2) where it should be /tb APIFunc(param1, param2, param3) showing the error about missing/wrong params again:
+--index nil error globalinspector.lua:309 while automatic Events were started after login (while changing SVs to start after next reloadui)
+--ContextMenu entries at E button (global inspector headline) "Events":
+---Automatically start at next login
+---Automatically start at next client start
+--2 new parameters for slash command /tbug events <param here> or /tbe <param here>
+--- /tbe reload     enable event tracking after reloadui, and reloadui now
+--- /tbe login      enable event tracking at next login (PreHook logout/quit functions and set the automaticEventTracking flag then only)
+---->tbug.slashCommandEvents(args)
 
---------------------------------------- Version 1.75 - Baertram (last updated 2026-02-11)
+--------------------------------------- Version 1.76 - Baertram (last updated 2026-07-29)
 ---- [Added]
---Libraries detection via "lib" prefix
---More enumerations (new bagIds e.g.)
---Added context menu enties to the events e/E button at the GlobalInspector title bar (and at the event inspector rows):
---Added # of entries to contextMenu's header if you can choose e.g. from an enumeration (BagId, itemType etc.)
----Start/Stop event tracking
----Setting to automatically start the event tracking as addon loads (button to enable that and reload the UI now)
----Save and load events tracked. Load shows them in an extra inspector using the eventviewer layout so you can compare them to current event viewer's tracked events
---Objects, class & libs detection at context menu so one can send <object or lib>:<functionName> or <.variableName> to scripts tab
---ScriptsViewer inspector: Created new ScriptsViewer inspector(s) able to run scripts in a separate window. Open the ScriptsViewer via contextMenu on a variable/table.
----ScriptsViewer UI got a button, which clicked shows a list of saved scripts from the global scripts tab, that you can load
----Added ScriptsViewer contextmenu to saved script history to open it in a new ScriptsViewer inspector
----Added keybind and slash command /tbugsv <scriptText> (ot /tbsv) to open a new ScriptsViewer
 
 ---- [Fixed]
---Some XML fixed height and width values versus resizeToFitDescendents ESO log errors
---Show chat output only if TBUG.doDebug == true
---Scrolling tabs won't resize to invisibly small anymore if window size is changed to very small (or below 0), or if many tabs added
---Fixed delayed calls to slash commands to accept negative values
---Some constants and enumerations in contextMenus did not show all possible values (ITEMTYPE_* e.g.)
 
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -304,6 +298,22 @@ tbug.filterComboboxFilterTypesPerPanel = {} --for the filter comboBox dropdown e
 tbug.openNewWindowSlashCommands = {
      ["scriptsViewer"] = true
 }
+--Special parameter for the events slash commands
+--[[
+        /tbe autooff    Disable automatic event tracking
+        /tbe 1reload    Enable event tracking after 1 next reloadui
+        /tbe reload     Enable event tracking after each reloadui
+        /tbe reloadnow  Enable event tracking after each reloadui and reload the UI now
+        /tbe login      Enable event tracking once at next login
+]]
+tbug.allowedSlashCommandsEventsParameters = {
+    ["autooff"]  = true,
+    ["1reload"]  = true,
+    ["reload"]  = true,
+    ["reloadnow"]  = true,
+    ["login"]   = true,
+}
+tbug.activateAutomaticEventTrackingOnNextLogin = nil --variable needed to set SV.enableEventTrackerAtStartup = true on logout/quit, so the next login automatically enables the event tracking
 
 --The string prefix for special /tb <specialInspectTabTitle> calls
 local specialInspectTabTitles = {

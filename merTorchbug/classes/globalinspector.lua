@@ -273,6 +273,7 @@ function GlobalInspector:refresh()
     local svTabs = tbug.SavedVariablesTabs
     if ZO_IsTableEmpty(svTabs) then
         tbug.refreshSavedVariablesTable()
+        svTabs = tbug.SavedVariablesTabs
     end
 
     local lookupTabClass = tbug.LookupTabs["class"]
@@ -306,7 +307,7 @@ function GlobalInspector:refresh()
             else
                 --Do not add __isObject = true to a SavedVariables table
                 --todo 20250102 Detect SavedVariables more reliably, like MasterMerchant etc. or do not add __isObject anymore to each table.
-                if svTabs[v] == nil and v ~= _G and v ~= EsoStrings then
+                if svTabs and svTabs[v] == nil and v ~= _G and v ~= EsoStrings then
                     --v[isObjectKey] = true
                     --would make detection of objects slower then as it needs to always check each table, as the contextMenu opens, if it is an object
                     local objectTabName = tbug_glookup(v)

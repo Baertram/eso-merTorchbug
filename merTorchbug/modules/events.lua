@@ -357,8 +357,58 @@ function tbug.LoadEventsTracked(key, loadDetailsStr)
 end
 
 
+function tbug.SetAutomaticEventsTrackingFlag(value, doReloadUI, activateNextLogin, chatOutput, onlyFor1ReloadUI, allOff)
+    doReloadUI = doReloadUI or false
+    activateNextLogin = activateNextLogin or false
+    chatOutput = chatOutput or false
+    onlyFor1ReloadUI = onlyFor1ReloadUI or false
+    allOff = allOff or false
+
+    if allOff == true then
+        tbug.activateAutomaticEventTrackingOnNextLogin = false
+        tbug.savedVars.enableEventTrackerAtStartup = false
+        tbug.savedVars.enableEventTrackerAtStartupOnlyOnce = nil
+        if chatOutput == true then
+            d("[TBUG]Automatic events: Off")
+        end
+        return
+    end
+
+    tbug.savedVars.enableEventTrackerAtStartup = value
+    tbug.savedVars.enableEventTrackerAtStartupOnlyOnce = nil
+    if value ~= nil and value == true and not doReloadUI and not activateNextLogin and chatOutput == true then
+        if true == onlyFor1ReloadUI then
+            tbug.savedVars.enableEventTrackerAtStartupOnlyOnce = true
+            d("[TBUG]Automatic events at 1 next ReloadUI: On")
+        else
+            d("[TBUG]Automatic events at all ReloadUIs: On")
+        end
+    end
+
+    --Activate the automatic event tracking on next login?
+    if activateNextLogin == true then
+        tbug.activateAutomaticEventTrackingOnNextLogin = true
+        if chatOutput == true then
+            d("[TBUG]Automatic events at next login: On")
+        end
+    else
+        tbug.activateAutomaticEventTrackingOnNextLogin = nil
+    end
+
+    --Reload the UI now?
+    if doReloadUI == true then
+        ReloadUI("ingame")
+    end
+end
+
 --At startup of the addon EVENT_ADD_ON_LOADED: Automatically load the event tracking?
 function tbug.AutomaticEventTrackingCheck()
-    if not tbug.savedVars.enableEventTrackerAtStartup then return end
-    startEventTracking()
+    local sv = tbug.savedVars
+    if sv.enableEventTrackerAtStartup then
+        if sv.enableEventTrackerAtStartupOnlyOnce == true then
+            sv.enableEventTrackerAtStartupOnlyOnce = nil
+            sv.enableEventTrackerAtStartup = false
+        end
+        startEventTracking()
+    end
 end
