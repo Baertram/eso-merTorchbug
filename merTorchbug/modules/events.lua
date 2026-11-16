@@ -8,6 +8,7 @@ local tbug = TBUG or SYSTEMS:GetSystem("merTorchbug")
 local type = type
 local select = select
 local strfind = string.find
+local zo_getSafeId64Key = zo_getSafeId64Key
 local tinsert = table.insert
 local tremove = table.remove
 
@@ -134,6 +135,19 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 --The events tracker functions
 
+--id64 values are Lua numbers and can share a hash. zo_getSafeId64Key returns Id64ToString.
+local function isId64EventParamType(eventParamTypeName)
+    return eventParamTypeName == "id64" or eventParamTypeName == "ItemSetCollectionSlot_id64"
+end
+
+local function getStoredEventParamValue(eventParamField, eventParamValue)
+    local eventParamTypeName = eventParamField and eventParamField[2]
+    if isId64EventParamType(eventParamTypeName) then
+        return zo_getSafeId64Key(eventParamValue)
+    end
+    return eventParamValue
+end
+
 --Add the event tracked to the list and show them at the output tab
 function tbEvents.EventHandler(eventId, ...)
     if not tbEvents.IsEventTracking == true then return end
@@ -168,6 +182,7 @@ function tbEvents.EventHandler(eventId, ...)
                 local documentedParamIndex = paramIndex - eventParamIndexOffset
                 local eventParamField = eventParamFields and eventParamFields[documentedParamIndex]
                 eventParamKey = (eventParamField and eventParamField[1]) or ("param" .. tostring(paramIndex))
+                eventParamValue = getStoredEventParamValue(eventParamField, eventParamValue)
             end
             eventTab[eventParamKey] = eventParamValue
         end
