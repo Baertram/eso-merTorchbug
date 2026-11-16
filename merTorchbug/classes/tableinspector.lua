@@ -145,6 +145,11 @@ local function invoke(object, method, ...)
     return object[method](object, ...)
 end
 
+-- Same right-column conversion as keyToSpecialRightKeyFunc["uniqueId"].
+local function isId64EventParamType(eventParamTypeName)
+    return eventParamTypeName == "id64" or eventParamTypeName == "ItemSetCollectionSlot_id64"
+end
+
 -- Documented event payload field for an opened event record, or nil for metadata and paramN fallbacks.
 -- Returns the { fieldName, typeName } entry and its 1-based signature index.
 local function getEventParamField(eventRecord, key)
@@ -582,7 +587,9 @@ function TableInspectorPanel:initScrollList(control)
                 if rightKeyText == nil or rightKeyText == "" then
                     local eventParamField = getEventParamField(eventRecord, k)
                     local eventParamTypeName = eventParamField and eventParamField[2]
-                    if eventParamTypeName ~= nil and eventParamTypeName ~= "" then
+                    if isId64EventParamType(eventParamTypeName) then
+                        setupValue(row.cKeyRight, stringType, zo_getSafeId64Key(v), true)
+                    elseif eventParamTypeName ~= nil and eventParamTypeName ~= "" then
                         setupValue(row.cKeyRight, stringType, eventParamTypeName, true)
                     end
                 end
