@@ -20,6 +20,7 @@ modules/savedvars.lua
 modules/colors.lua
 modules/main.lua
 modules/contextmenu.lua
+modules/eventParamFields.lua
 modules/events.lua
 modules/filters.lua
 modules/controlHeaderAndRow.lua
